@@ -189,7 +189,8 @@ to get your service principal token for both the staging and prod service princi
   {{ end }}
       - Ensure that the two Azure Pipelines created in the prior step have access to these variables by selecting the name of the pipelines under the 'Pipeline permissions' tab of this variable group.
       - Alternatively you could store these secrets in an [Azure Key Vault](https://learn.microsoft.com/en-us/azure/devops/pipelines/release/key-vault-in-own-project?view=azure-devops&tabs=portal) and link those secrets as variables to be used in the Pipelines.
-1. Define two [build validation branch policies](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation) for the `{{template `default_branch` .}}` branch using the two Azure build pipelines created in step 1. This is required so that any PR changes to the `{{template `default_branch` .}}` must build successfully before PRs can complete.
+1. Define two [build validation branch policies](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation) for the `{{template `default_branch` .}}` branch using the two Azure build pipelines created in step 1. This is required so that any PR changes to the `{{template `default_branch` .}}` must build successfully before PRs can complete. 
+In the case of a monorepo, where there are multiple projects under a single repository, set a [path filter](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#path-filters) on the build validation policies, such that devops pipelines are only triggered when there are changes to the respective projects (e.g. the path filter would be `/project1/*` to trigger a devops pipeline when changes are made to _only_ files under the `project1` folder).
 
 {{ if (eq .input_cloud `azure`) }}
 ### Service connection approach [Recommended in production settings]
@@ -233,7 +234,8 @@ The ultimate aim of the service connection approach is to use two separate servi
   > Note that you will have to update this code snippet with the respective service connection names, depending on which Databricks workspace you are deploying assets to.
 
 5. Create two separate Azure Pipelines under your Azure DevOps project using the ‘Existing Azure Pipelines YAML file’ option. One of these Pipelines will use the `{{template `project_name` .}}-tests-ci.yml` script, and the other will use the `{{template `project_name` .}}-bundle-cicd.yml` script. See [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/create-first-pipeline) for more details on creating Azure Pipelines.
-6. Define two build validation branch policies for the `{{template `default_branch` .}}` using the two Azure Pipelines created in step 1. This is required so that any PR changes to the `{{template `default_branch` .}}` must build successfully before PRs can complete.
+6. Define two [build validation branch policies](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#build-validation) for the `{{template `default_branch` .}}` branch using the two Azure build pipelines created in step 1. This is required so that any PR changes to the `{{template `default_branch` .}}` must build successfully before PRs can complete. 
+In the case of a monorepo, where there are multiple projects under a single repository, set a [path filter](https://learn.microsoft.com/en-us/azure/devops/repos/git/branch-policies?view=azure-devops&tabs=browser#path-filters) on the build validation policies, such that devops pipelines are only triggered when there are changes to the respective projects (e.g. the path filter would be `/project1/*` to trigger a devops pipeline when changes are made to _only_ files under the `project1` folder).
   {{ end }}
 {{ end }}
 
