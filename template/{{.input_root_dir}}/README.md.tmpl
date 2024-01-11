@@ -162,7 +162,7 @@ or pipeline assets (e.g. use a larger instance type for model training) via pull
 
 ## Setting up CI/CD for multiple projects
 
-It's possible to use the repo as a monorepo that contains multiple projects. All projects share the same workspaces and service principals.
+It's possible to use the repo as a monorepo that contains multiple projects if all projects share the same workspaces and service principals.
 
 For example, assuming there's existing repo with root directory name `monorepo_root_dir` and project name `project1`
 1. Create another project from `databricks bundle init` with project name `project2` and root directory name `monorepo_root_dir`, while specifying 'no' for the 'Setup CI/CD' prompt.
@@ -178,3 +178,10 @@ For example, assuming there's existing repo with root directory name `monorepo_r
     - The `'trigger'` `'paths'` `'include'` parameter in each file
 {{ end -}}
 
+NOTE: If the second project uses a different CI/CD platform or feature store configuration, then the project will need to go through the full CI/CD setup process
+by running the initialization again but specifying 'yes' for the 'Setup CI/CD' prompt and keeping the other parameters the same. 
+{{ if or (eq .input_cicd_platform `github_actions`) (eq .input_cicd_platform `github_actions_for_github_enterprise_servers`) -}}
+After initialization, copy the workflows from `project_2/.github/workflows/` to `monorepo_root_dir/.github/workflows/`.
+{{- else if (eq .input_cicd_platform `azure_devops`) }}
+After initialization, copy the workflows from `project_2/.azure/devops-pipelines/` to `monorepo_root_dir/.azure/devops-pipelines/`.
+{{ end -}}
