@@ -13,7 +13,7 @@
     "input_setup_cicd": {
       "order": 2,
       "type": "string",
-      "description": "\nWhether to setup CI/CD. NOTE: If using a monorepo and CI/CD has already been setup, specify 'no' here",
+      "description": "\nWhether to setup CI/CD. NOTE: If using a monorepo and CI/CD has already been setup, specify 'no' here. This can also be set up later.",
       "default": "yes",
       "enum": ["yes", "no"]
     },
